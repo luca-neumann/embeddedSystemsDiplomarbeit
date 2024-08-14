@@ -1,3 +1,7 @@
+
+//WICHTIG
+//Der Code funktioniert vermutlich nicht richtig und Verwendet alte Bibliotheken (<hal/hal.h>)
+
 #include <lmic.h>
 #include <hal/hal.h>
 #include <SPI.h>
