@@ -1,6 +1,7 @@
 
 //WICHTIG
-//Der Code funktioniert vermutlich nicht richtig und Verwendet alte Bibliotheken (<hal/hal.h>)
+//Der Code funktioniert vermutlich nicht richtig und Verwendet alte Bibliotheken (<hal/hal.>) --> aktuelle Bibliothek siehe ReadMe
+
 
 #include <lmic.h>
 #include <hal/hal.h>
