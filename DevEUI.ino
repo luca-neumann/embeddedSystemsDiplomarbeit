@@ -1,44 +1,49 @@
+#include <Arduino.h>
+#include <heltec.h>
+#include <WiFi.h>  // Für WiFi.macAddress()
 
-//WICHTIG
-//Der Code funktioniert vermutlich nicht richtig und Verwendet alte Bibliotheken (<hal/hal.>) --> aktuelle Bibliothek siehe ReadMe
+void generateDevEUI(uint8_t *devEUI) {
+  Serial.println("Generate"); delay(5000);
+  uint8_t mac[6];
+  WiFi.macAddress(mac);  // MAC-Adresse des ESP32 auslesen
 
+  // Die DevEUI wird generiert, indem die MAC-Adresse verwendet und angepasst wird
+  devEUI[0] = 0x00;
+  devEUI[1] = 0x00;
+  devEUI[2] = mac[0];
+  devEUI[3] = mac[1];
+  devEUI[4] = mac[2];
+  devEUI[5] = 0xFF;
+  devEUI[6] = 0xFE;
+  devEUI[7] = mac[3];
+}
 
-#include <lmic.h>
-#include <hal/hal.h>
-#include <SPI.h>
-
-// Funktion zum Auslesen der Device EUI
 void printDevEUI() {
-    uint8_t devEUI[8];
-    os_getDevEui(devEUI);
+  Serial.println("Print"); delay(5000);
+  uint8_t devEUI[8];
 
-    Serial.print("Device EUI: ");
-    for (int i = 0; i < 8; i++) {
-        if (devEUI[i] < 0x10) {
-            Serial.print(F("0"));
-        }
-        Serial.print(devEUI[i], HEX);
-        if (i < 7) {
-            Serial.print("-");
-        }
-    }
-    Serial.println();
+  // DevEUI generieren
+  generateDevEUI(devEUI);
+
+  // DevEUI auf der seriellen Schnittstelle ausgeben
+  Serial.print("DevEUI: ");
+  for (int i = 0; i < 8; i++) {
+    Serial.printf("%02X", devEUI[i]);
+  }
+  Serial.println();
 }
 
 void setup() {
-    Serial.begin(115200);
+  // Serielle Kommunikation starten
+  Serial.begin(115200);
+  
+  // Initialisiere das Heltec-Board ohne Display
+  Heltec.begin(false /*DisplayEnable*/, true /*LoRaEnable*/, true /*SerialEnable*/);
 
-    // LMIC init
-    os_init();
-
-    // Reset the MAC state. Session and pending data transfers will be discarded.
-    LMIC_reset();
-
-    // DevEUI auslesen und anzeigen
-    printDevEUI();
+  // DevEUI auslesen und anzeigen
+  printDevEUI();
 }
 
 void loop() {
-    // Hier könnte der Rest deines LoRaWAN-Codes sein
+  // Hier könntest du andere Aktionen ausführen
 }
-
