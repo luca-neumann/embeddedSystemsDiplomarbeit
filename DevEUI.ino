@@ -1,9 +1,42 @@
-#include <Arduino.h>
-#include <heltec.h>
-#include <WiFi.h>  // Für WiFi.macAddress()
+#include <WiFi.h>
+#include "heltec.h"
+
+// WiFi-Konfigurationsdaten
+//WICHTIG: WLAN muss auf 2,4 GHz laufen
+const char* ssid = "LaMartinaEG";         //SSID
+const char* password = "OLZFLFGXYMLPLLJN";    //Passwort
+
+void setup() {
+  // Initialisieren der serielle Schnittstelle für Debugging
+  Serial.begin(115200);
+
+  // Initialisieren des Heltec-Boards
+  Heltec.begin(false /*Display*/, false /*LoRa*/, true /*Serial*/);
+
+  // WiFi-Verbindung herstellen
+  WiFi.begin(ssid, password);
+  Serial.print("Verbindung zu WiFi wird hergestellt");
+
+  // Warten, bis die Verbindung hergestellt ist
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  // WiFi-Verbindung hergestellt
+  Serial.println("");
+  Serial.println("Mit WiFi verbunden!");
+  Serial.print("IP-Adresse: ");
+  Serial.println(WiFi.localIP());
+
+  //MAC-Ausgeben:
+  Serial.print("MAC:");
+  Serial.println(WiFi.macAddress());
+
+  printDevEUI();
+  }
 
 void generateDevEUI(uint8_t *devEUI) {
-  Serial.println("Generate"); delay(5000);
   uint8_t mac[6];
   WiFi.macAddress(mac);  // MAC-Adresse des ESP32 auslesen
 
@@ -19,7 +52,7 @@ void generateDevEUI(uint8_t *devEUI) {
 }
 
 void printDevEUI() {
-  Serial.println("Print"); delay(5000);
+  Serial.println("DevEUI:"); delay(1000);
   uint8_t devEUI[8];
 
   // DevEUI generieren
@@ -33,17 +66,7 @@ void printDevEUI() {
   Serial.println();
 }
 
-void setup() {
-  // Serielle Kommunikation starten
-  Serial.begin(115200);
-  
-  // Initialisiere das Heltec-Board ohne Display
-  Heltec.begin(false /*DisplayEnable*/, true /*LoRaEnable*/, true /*SerialEnable*/);
-
-  // DevEUI auslesen und anzeigen
-  printDevEUI();
-}
-
 void loop() {
-  // Hier könntest du andere Aktionen ausführen
+  // Der loop() bleibt leer, da alle relevanten Aktionen im setup() ausgeführt wurden
 }
+
