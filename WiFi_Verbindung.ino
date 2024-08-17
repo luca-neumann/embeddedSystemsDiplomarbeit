@@ -3,8 +3,8 @@
 
 // WiFi-Konfigurationsdaten
 //WICHTIG: WLAN muss auf 2,4 GHz laufen
-const char* ssid = "XX";         //SSID
-const char* password = "XX";    //Passwort
+const char* ssid = "LaMartinaEG";         //SSID
+const char* password = "OLZFLFGXYMLPLLJN";    //Passwort
 
 void setup() {
   // Initialisieren der serielle Schnittstelle für Debugging
@@ -29,7 +29,10 @@ void setup() {
   Serial.print("IP-Adresse: ");
   Serial.println(WiFi.localIP());
 
-}
+  //MAC-Ausgeben:
+  Serial.print("MAC:");
+  Serial.println(WiFi.macAddress());
+  }
 
 void loop() {
   // Der loop() bleibt leer, da alle relevanten Aktionen im setup() ausgeführt wurden
