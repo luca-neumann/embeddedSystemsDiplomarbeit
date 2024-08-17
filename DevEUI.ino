@@ -25,7 +25,7 @@ void setup() {
 
   // WiFi-Verbindung hergestellt
   Serial.println("");
-  Serial.println("Mit WiFi verbunden!");
+  Serial.println("Mit WiFi verbunden");
   Serial.print("IP-Adresse: ");
   Serial.println(WiFi.localIP());
 
@@ -36,32 +36,28 @@ void setup() {
   printDevEUI();
   }
 
-void generateDevEUI(uint8_t *devEUI) {
-  uint8_t mac[6];
-  WiFi.macAddress(mac);  // MAC-Adresse des ESP32 auslesen
-
-  // Die DevEUI wird generiert, indem die MAC-Adresse verwendet und angepasst wird
-  devEUI[0] = 0x00;
-  devEUI[1] = 0x00;
-  devEUI[2] = mac[0];
-  devEUI[3] = mac[1];
-  devEUI[4] = mac[2];
-  devEUI[5] = 0xFF;
-  devEUI[6] = 0xFE;
-  devEUI[7] = mac[3];
-}
-
 void printDevEUI() {
-  Serial.println("DevEUI:"); delay(1000);
+  uint8_t mac[6];
   uint8_t devEUI[8];
 
-  // DevEUI generieren
-  generateDevEUI(devEUI);
+  // MAC-Adresse abrufen
+  WiFi.macAddress(mac);
 
-  // DevEUI auf der seriellen Schnittstelle ausgeben
-  Serial.print("DevEUI: ");
+  // Umwandlung der MAC-Adresse in EUI-64
+  devEUI[0] = mac[0] ^ 0x02;  // Universal/Local-Bit umkehren (optional)
+  devEUI[1] = mac[1];
+  devEUI[2] = mac[2];
+  devEUI[3] = 0xFF;
+  devEUI[4] = 0xFE;
+  devEUI[5] = mac[3];
+  devEUI[6] = mac[4];
+  devEUI[7] = mac[5];
+
+  // Ausgabe der devEUI
+  Serial.print("Die devEUI ist: ");
   for (int i = 0; i < 8; i++) {
-    Serial.printf("%02X", devEUI[i]);
+    if (i != 0) Serial.print(":");
+    Serial.print(devEUI[i], HEX);
   }
   Serial.println();
 }
@@ -69,4 +65,3 @@ void printDevEUI() {
 void loop() {
   // Der loop() bleibt leer, da alle relevanten Aktionen im setup() ausgeführt wurden
 }
-
