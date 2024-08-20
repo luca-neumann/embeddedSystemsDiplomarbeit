@@ -3,8 +3,8 @@
 
 // WiFi-Konfigurationsdaten
 //WICHTIG: WLAN muss auf 2,4 GHz laufen
-const char* ssid = "LaMartinaEG";         //SSID
-const char* password = "OLZFLFGXYMLPLLJN";    //Passwort
+const char* ssid = "Luca`s iPhone 14 Pro";         //SSID
+const char* password = "franzjosefdererste";    //Passwort
 
 void setup() {
   // Initialisieren der serielle Schnittstelle für Debugging
