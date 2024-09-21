@@ -1,0 +1,94 @@
+#include <WiFi.h>
+#include "EmbeddedMqttBroker.h"
+#include <LoRa.h>
+#include <SPI.h>
+
+using namespace mqttBrokerName;
+
+// WiFi-Konfiguration
+const char* ssid = "Luca`s iPhone 14 Pro";  //SSID
+const char* password = "albertgreinocker"; //Passwort
+
+// LoRa-Konfiguration
+#define ss 18
+#define rst 14
+#define dio0 26
+
+// MQTT-Broker-Einstellungen
+uint16_t mqttPort = 8883;
+MqttBroker broker(mqttPort);
+String lorastring;
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println();
+  Serial.println("MQTT Broker mit LoRa startet...");
+
+  // WiFi initialisieren und verbinden
+  Serial.print("Verbinden mit ");
+  Serial.println(ssid);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("");
+  Serial.println("WiFi verbunden");
+
+  // LoRa initialisieren
+  Serial.println("LoRa-Empfänger wird gestartet...");
+  SPI.begin(5, 19, 27, 18);
+  LoRa.setPins(ss, rst, dio0);
+
+  if (!LoRa.begin(868E6)) {
+    Serial.println("LoRa konnte nicht gestartet werden!");
+    while (1);
+    delay(1000);
+  }
+  Serial.println("LoRa gestartet");
+
+  // MQTT-Broker starten
+  broker.setMaxNumClients(9); // Max. Anzahl der Clients
+  broker.startBroker();       // Broker starten
+  Serial.println("MQTT-Broker gestartet!");
+
+  // Verbindungsdaten ausgeben
+  Serial.print("Verwende diese IP: ");
+  Serial.println(WiFi.localIP());
+  Serial.print("Verwende diesen Port: ");
+  Serial.println(mqttPort);
+  Serial.println("");
+}
+
+void loop() {
+  // Überprüfen, ob ein LoRa-Paket empfangen wurde
+  int paketlaenge = LoRa.parsePacket();
+  if (paketlaenge) {
+    Serial.println("LoRa-Paket empfangen!");
+    lora_paket();
+
+    // Inhalt des Pakets ausgeben
+    Serial.print("Inhalt des Pakets: ");
+    Serial.println(lorastring);
+
+    // LoRa-Inhalt als MQTT-Nachricht verteilen
+    PublishMqttMessage publishMsg;
+    publishMsg.setTopic("sensor/pm");  // Setze das Topic direkt als String
+    publishMsg.setPayLoad(lorastring);  // Setze den empfangenen LoRa-String als Payload
+
+    // Nachricht über den Broker veröffentlichen
+    broker.publishMessage(&publishMsg);
+
+    Serial.println("Nachricht über MQTT verteilt.");
+  }
+}
+
+// Funktion, um den Inhalt des LoRa-Pakets zu lesen
+void lora_paket() {
+  lorastring = "";  // Leeren des Strings am Anfang
+  while (LoRa.available()) {
+    lorastring += (char)LoRa.read();
+  }
+}
+
