@@ -6,8 +6,8 @@
 using namespace mqttBrokerName;
 
 // WiFi-Konfiguration
-const char* ssid = "LaMartinaEG";  //SSID
-const char* password = "OLZFLFGXYMLPLLJN"; //Passwort
+const char* ssid = "SSID";  //SSID
+const char* password = "Passwort"; //Passwort
 
 // LoRa-Konfiguration
 #define ss 18 //Slave-Select
