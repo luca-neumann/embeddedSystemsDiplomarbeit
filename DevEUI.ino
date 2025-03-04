@@ -3,8 +3,8 @@
 
 // WiFi-Konfigurationsdaten
 //WICHTIG: WLAN muss auf 2,4 GHz laufen
-const char* ssid = "LaMartinaEG";         //SSID
-const char* password = "OLZFLFGXYMLPLLJN";    //Passwort
+const char* ssid = "ssid";         //SSID
+const char* password = "passwort";    //Passwort
 
 void setup() {
   // Initialisieren der serielle Schnittstelle für Debugging
